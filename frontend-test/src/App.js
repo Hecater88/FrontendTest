@@ -1,11 +1,11 @@
-import React from 'react';
+import React , { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { SocketContext, socket } from './context/socket';
 
 
 function App() {
-  
+console.log(socket);
   return (
     <SocketContext.Provider value={socket}>
       <div className="App">
