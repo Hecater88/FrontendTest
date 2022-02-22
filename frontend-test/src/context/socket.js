@@ -9,9 +9,11 @@ socket.addEventListener('open', function (event) {
 });
 
 // Listen for messages
-/* socket.addEventListener('message', function (event) {
+socket.addEventListener('message', function (event) {
     console.log('Message from server ', event.data);
+    const json = JSON.parse(event.data)
+console.log("json:", json);
    
-}); */
-const json = JSON.parse(socket.data);
-export const SocketContext = React.createContext(json);
+});
+
+export const SocketContext = React.createContext(socket);
