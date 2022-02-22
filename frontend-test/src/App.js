@@ -1,59 +1,107 @@
-import React, { useState } from 'react';
+import React, { createContext, useEffect, useState, useRef } from 'react';
 import logo from './logo.svg';
 import './App.css';
-/* import { SocketContext, socket } from './context/socket'; */
+
+import Header from "./components/Header/Header";
 
 
+export const DataContext = createContext(null);
 
 function App() {
-  const [bids, setBids] = useState();
-  const socket = new WebSocket('wss://unified-live.betfire.com/test/ws/live-feed?lang=en');
+  const [isLoading, setIsLoading] = useState(false);
+  const [rebase, setRebase] = useState({});
+  const [filter, setFilter] = useState({});
+  const [sportType, setSportType] = useState(0);
 
-  // Abre la conexión
-  socket.addEventListener('open', function (event) {
-    socket.send('{"type":"login","data":{"lang":"en","skin":"api-new.betbuq.com"}}');
-    socket.send('{"type":"menu"}');
-  });
+  const ws = useRef(null);
 
-  // Escucha por mensajes
-  socket.addEventListener('message', function (event) {
-    /* console.log('Message from server', event.data); */
-    const json = JSON.parse(event.data)
-    console.log("json:", json["data"]);
-    setBids(json.data.slice(0, 5));
-  });
+  useEffect(() => {
+    ws.current = new WebSocket('wss://unified-live.betfire.com/test/ws/live-feed?lang=en');
+    ws.current.onopen = () => {
+      ws.current.send('{"type":"login","data":{"lang":"en","skin":"api-new.betbuq.com"}}');
+      ws.current.send('{"type":"menu"}');
+    };
+    const wsCurrent = ws.current;
 
-  const firstBids = bids?.map((item, i) => {
-    return (
-      <div key={i}>
-        <p> {item.op}</p>
-        <p> {item.path}</p>
-      </div>
-    );
-  });
+    return () => {
+      wsCurrent.close();
+    };
+    /*   ws.onmessage = function (event) {
+        const json = JSON.parse(event.data);
+        try {
+          if ((json.type === 'rebase')) {
+            console.log("Entra rebase")
+            setRebase(
+              {
+                ...json.data.events,
+              }
+            );
+            setFilter(
+              {
+                ...json.data.events,
+              }
+            );
+            
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }; */
+  },
+    []
+  )
+
+  useEffect(() => {
+    if (!ws.current) return;
+    ws.current.onmessage = function (event) {
+      const json = JSON.parse(event.data);
+      console.log("json",json)
+
+      if ((json.type === 'rebase')) {
+        const obj =json.data.events;
+        console.log("Entra rebase")
+        setRebase({...obj});
+        setFilter({...obj});
+      }
+    };
+  }, []);
+
+
+  useEffect(() => {
+    console.log("segundo useEffect", filter);
+    const newRebase = {...rebase}
+    Object.keys(rebase).forEach(key => {
+      if (rebase[key].sport === sportType) {
+        newRebase[key] = rebase[key];
+        setFilter(newRebase);
+      } else {
+        delete newRebase[key]
+        setFilter(newRebase);
+      }
+
+      setIsLoading(false)
+    })
+    console.log("newRebase",newRebase)
+  }, [sportType]);
+ 
+  console.log("filter",filter)
+
   return (
-    //<SocketContext.Provider value={socket}>
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        
-      </header>
-      <div>
-      {firstBids}
-      </div>
-    </div>
-    //</SocketContext.Provider>
+    <>
+      <DataContext.Provider value={{ sportType, setSportType }}>
+        <div className="App">
+          <Header />
+          <div>
+            {
+              !isLoading ? (
+                Object?.keys(filter)?.map(key =>
+                  <p key={key}>{filter[key]?.name}</p>
+                )) : (<p>cargando</p>)
+            }
+          </div>
+        </div>
+      </DataContext.Provider>
+    </>
   );
 }
 
