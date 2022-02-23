@@ -6,39 +6,51 @@ import Header from "./components/Header/Header";
 
 export const DataContext = createContext(null);
 
-function deleteItemObject(object, path) {
-  console.log("object", object)
-  path = path.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
-  path = path.replace(/^\./, '');           // strip a leading dot
-  var stack = path.split('/').filter(el => el !== '');
-
-  console.log("stack", stack);
-  for (var i = 0, n = stack.length; i < n; ++i) {
-    console.log("stack[i]", stack[i])
-    var k = stack[i];
-    if (k in object) {
-      console.log("entra if");
-      object = object[k];
-      
-    } else {
-      return;
+/* function deleteItemObject(object, path, data) {
+  var pathArray = path.split("/");
+  pathArray.shift();
+  var item = object;
+  pathArray.forEach((element, index, array) => {
+    var i = 0;
+    while (item[i] !== null) {
+      if (item[element]) {
+        if (index >= array.length - 1) {
+          item[element] = data;
+          break;
+        } else {
+          item = item[element];
+        }
+        break;
+      }
+      i++;
     }
-    return _.get(object);
-  }
-  
-  /* delete object[stack.shift()] */
+  })
 
-}
+} */
 
 function updateObject(object, newValue, path) {
+  var pathArray = path.split("/").filter(el => el !== '');
+  pathArray.shift();
+ /*  var item = object; */
 
-  var stack = path.split('/');
-
-  while (stack.length > 1) {
-    object = object[stack.shift()];
-  }
-
-  object[stack.shift()] = newValue;
+ /*  pathArray.forEach((element, index, array) => {
+    Object.keys(item).forEach(key => {
+      if (item[key] !== null) {
+        if (index >= array.length - 1) {
+          console.log("entro new value")
+          item[key] = newValue;
+        } else {
+          console.log("cambio end point")
+          console.log("item",item)
+          item = item[element];
+        }
+      }
+    })
+  }) */
+  for (var i=0, pathh=pathArray, len=pathh.length; i<len; i++){
+    object = object[pathh[i]];
+};
+console.log(object);
 
 }
 
@@ -79,16 +91,17 @@ function App() {
       } else if ((json.type === 'update')) {
         const newRebase = { ...rebase }
         Object.keys(json.data).forEach(key => {
-          if (json.data[key].op === "remove") {
+          if (json.data[key].op === "replace") {
+            console.log("entra replace");
+            updateObject(newRebase, json.data[key].value, json.data[key].path)
+            setRebase(newRebase);
+          }/*
+           if (json.data[key].op === "remove") {
             console.log("path", json.data[key].path);
             console.log("newRebase", newRebase)
             console.log("deteted",deleteItemObject(newRebase, json.data[key].path));
             setRebase(newRebase);
-          } /* else if (rebase[key].op === "replace") {
-            console.log("entra replace");
-            updateObject(newRebase, rebase[key].value, rebase[key].op.path)
-            setRebase(newRebase);
-          }
+          }  else
           else if (rebase[key].op === "add") {
             console.log("add");
             updateObject(newRebase, rebase[key].value, rebase[key].op.path)
