@@ -17,6 +17,12 @@ const Header = () => {
             <div className="sports-navigation-general">
                 <div className="sport-nav-container-general scrollbar-general">
                     <ul>
+                    <li>
+                            <button onClick={() => context.setSportType(0)}>
+                                <span><i className="games-count-view-general">3</i></span>
+                                <p>All</p>
+                            </button>
+                        </li>
                         <li>
                             <button onClick={() => context.setSportType(1)}>
                                 <span><SportsSoccerIcon fontSize="large" /><i className="games-count-view-general">3</i></span>
