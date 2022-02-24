@@ -1,0 +1,45 @@
+.game-information-mob {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  border-top: 0.5px solid #011638;
+}
+.teams-name-info-mob {
+  width: 30%;
+  padding: 10px;
+  background-color: #607466;
+  color: #dff8eb;
+  text-align: left;
+}
+.game-score-live-mob{
+    font-size: 20px;
+    color:#38E4AE;
+    font-weight: bold;;
+}
+.match-result-container {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+}
+.match-result-text {
+  background-color: #607466;
+  color: #dff8eb;
+}
+.factor-container {
+  align-items: stretch;
+  display: flex;
+  justify-content: space-around;
+  height: 100%;
+}
+.factor-mob {
+  background-color: #343E3D;
+  color: #dff8eb;
+  flex: 1;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.factor-mob > span {
+  margin: 0 auto;
+}

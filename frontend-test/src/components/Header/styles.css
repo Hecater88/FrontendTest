@@ -6,7 +6,7 @@
 .sports-navigation-general {
     float: left;
     width: 100%;
-    background: #2d393e;
+    background: #AEDCC0;
 }
 
 .sport-nav-container-general {
@@ -33,15 +33,16 @@ ul{
 }
 
 .sport-nav-container-general>ul>li>button {
-    height:100px;
     width:auto;
-    font-size: 12px;
-    padding: 10px;
-    display: block;
+    border-radius: 8px;
+    font-size: 14px;
+    padding: 0 12px;
     text-decoration: none;
-    color: #000;
     position: relative;
     text-align: center;
+    background: #607466;
+    color: #DFF8EB;
+    border: none;
 }
 
 .sport-icon-general {
